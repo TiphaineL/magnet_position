@@ -1,8 +1,7 @@
-def pickupArea_rec(w_robot,l_robot,l_rect,mag_r):
+def pickupArea_rec(w_robot,l_robot,l_rect,mag):
 
     import math
     import numpy as np
-    from rectangle import drawRect
 
     # Rectangular magnets can be picked-up in 2 different manners:
     # towards the circular magnet:                                in
@@ -18,31 +17,20 @@ def pickupArea_rec(w_robot,l_robot,l_rect,mag_r):
     # and the projected center of the area on the vertical axis - See Tiph's notes
     h = 0.25 * (l_rect + w_robot)
 
-    A = []
+    x_r   = mag[0]
+    y_r   = mag[1]
+    ang_r = mag[2]
 
-    i = 0
+    # Calculate the center of the pickup area
+    x_out = x_r + h * math.sin((np.pi / 180.0) * (ang_r))
+    y_out = y_r + h * math.cos((np.pi / 180.0) * (ang_r))
 
-    for magnet in mag_r:
-        x_r   = mag_r[i][0]
-        y_r   = mag_r[i][1]
-        ang_r = mag_r[i][2]
+    x_in = x_r - h * math.sin((np.pi / 180.0) * (ang_r))
+    y_in = y_r - h * math.cos((np.pi / 180.0) * (ang_r))
 
-        # Calculate the center of the pickup area
-        x_out = x_r + h * math.sin((np.pi / 180.0) * (ang_r))
-        y_out = y_r + h * math.cos((np.pi / 180.0) * (ang_r))
+    area = [[x_out, y_out, ang_r],
+            [x_in,  y_in,  ang_r]]
 
-        x_in = x_r - h * math.sin((np.pi / 180.0) * (ang_r))
-        y_in = y_r - h * math.cos((np.pi / 180.0) * (ang_r))
-
-        area = [[x_out, y_out, ang_r],
-                [x_in,  y_in,  ang_r]]
-
-        A.append(area)
-
-        drawRect(x_out, y_out, l_robot, 0.5 * (l_rect + 3.0 * w_robot), ang_r, 'c')
-        drawRect(x_in,  y_in,  l_robot, 0.5 * (l_rect + 3.0 * w_robot), ang_r, 'c')
+    return area
 
 
-        i += 1
-
-    return A

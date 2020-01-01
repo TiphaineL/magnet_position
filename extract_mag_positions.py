@@ -27,7 +27,7 @@ def extract_positions(probe,x,y,angs_azAng,L):
         # Convert into degrees
         angle = rot_angle * (180 / np.pi)
 
-        mag_c.append([x_c, y_c,angle])
+        mag_c.append([x_c, y_c,angle,0,probe[int(i)-1]])
 
         # From the file fetch the angle of the rectangular magnet (angle relative to the tangent of the radius -
         # See Olivia's notes for details)
@@ -40,6 +40,6 @@ def extract_positions(probe,x,y,angs_azAng,L):
 
         ang_r = 90 - alpha
 
-        mag_r.append([x_r,y_r,ang_r])
+        mag_r.append([x_r,y_r,ang_r,1,probe[int(i)-1]])
 
     return mag_c, mag_r
