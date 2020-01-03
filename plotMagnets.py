@@ -1,16 +1,9 @@
 import numpy             as np
 import matplotlib.pyplot as plt
-from circle                import circle
-from extract_mag_positions import extract_positions
-from plot_plate            import plot_plate
-from plot_magnets          import plot_magnets
-from draw_robot_arm        import draw_robot_arm
-from pickupArea_circ       import pickupArea_circ
-from draw_pickupArea_circ  import drawPickupArea_circ
-from pickupArea_rec        import pickupArea_rec
-from draw_pickupArea_rect  import drawPickupArea_rect
-from rect_corner           import rectangle_corner
-from check_conflict        import conflict
+from basic_computations      import calculate_circle_xy_coordinates, rectangle_corner, convert_degrees_to_radians, convert_modulus_angle
+from magnets_functions       import extract_positions, plot_plate, plot_magnets, draw_robot_arm, pickupArea_circ, \
+                                    pickupArea_rec, drawPickupArea_circ, drawPickupArea_rect
+from magnet_conflict         import conflict
 
 # This code reads the position of the magnets from the text file and plot them
 
@@ -30,7 +23,7 @@ w_rect        = 12.0                            # width of the rectangular magne
 l_rect        = 20.0                            # length of the rectangular magnets
 g             = 23.0                            # distance between the circular and the rectangular magnets
 L             = (r_circ + g + l_rect / 2.0)     # length between center of the circ. magnet and center of rect. magnet
-HECTOR_plate  = circle(0.0,0.0,260.0)
+HECTOR_plate  = calculate_circle_xy_coordinates(0.0, 0.0, 260.0)
 l_robot       = 14.02                           # length of the robot pick-up arm
 w_robot       = 5                               # width of the robot pick-up arm
 l_pickup_circ = l_robot                         # the length of the pickup area for the circular magnet
@@ -41,16 +34,22 @@ w_pickup_rect = 0.5 * (l_rect + 3.0 * w_robot)  # the width of the pickup area f
 ####################
 
 # Open and read file
-fileName = "WithStdStars_Field 7.txt"
-fileName = "WithStdStars_Field 12.txt"
-fileName = 'WithStdStars_Field_test.txt'
+fileName = "resources/WithStdStars_Field 7.txt"
+fileName = "resources/WithStdStars_Field 12.txt"
+fileName = 'resources/WithStdStars_Field_test.txt'
 file = open(fileName, "r")
-probe, x, y, radius, angs, azAngs, angs_azAng = np.loadtxt(file, skiprows=2, unpack=True)
+probe, x, y, radius, angs, azAngs, rectangle_orientation_degrees = np.loadtxt(file, skiprows=2, unpack=True)
+
+#rectangle_orientation_radians = convert_degrees_to_radians(rectangle_orientation_degrees)
+
+#rectangle_orientation_modulus_radians = np.array([])
+#for angle in rectangle_orientation_radians:
+    #rectangle_orientation_modulus_radians = np.append(rectangle_orientation_modulus_radians,convert_modulus_angle(angle))
 
 ####################
 
 # Extract position of the circular magnet (mag_c) and the rectangular magnet (mag_r)
-mag = extract_positions(probe,x,y,angs_azAng,L)
+mag = extract_positions(probe, x, y, rectangle_orientation_degrees, L)
 mag = np.concatenate(mag)
 
 # Plot the plate with the magnets
@@ -78,24 +77,9 @@ for i in range(len(mag)):
 # Calculate the coordinates of the corners
 xs   = pickupArea[0][0]
 ys   = pickupArea[0][1]
-angs = pickupArea[0][2]
+rectangle_orientation_modulus_radians = pickupArea[0][2]
 
-corner_rect = rectangle_corner(xs,ys,l_pickup_rect,w_pickup_rect,angs)
-
-# xs   = np.concatenate(pickupArea_rect[:,:,0].reshape(len(pickupArea_rect),1,2))
-# ys   = np.concatenate(pickupArea_rect[:,:,1].reshape(len(pickupArea_rect),1,2))
-# angs = np.concatenate(pickupArea_rect[:,:,2].reshape(len(pickupArea_rect),1,2))
-
-# corner_rect = rectangle_corner(xs,ys,l_pickup_rect,w_pickup_rect,angs)
-# corner_rect_1 = corner_rect[0]
-# corner_rect_2 = corner_rect[1]
-#
-# #corner_rect = rectangle_corner(pickupArea_rect[0,0,0],pickupArea_rect[0,0,1],l_pickup_rect,w_pickup_rect,\
-# #                               pickupArea_rect[0,0,2] )
-# # print(corner_rect)
-
-
-
+corner_rect = rectangle_corner(xs, ys, l_pickup_rect, w_pickup_rect, rectangle_orientation_modulus_radians)
 
 ####################
 # Isolate the magnets that have a close proximity to each others

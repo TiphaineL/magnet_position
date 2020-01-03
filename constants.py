@@ -1,0 +1,12 @@
+r_circ        = 6.0                             # radius of the circular magnets
+w_rect        = 12.0                            # width of the rectangular magnets
+l_rect        = 20.0                            # length of the rectangular magnets
+g             = 23.0                            # distance between the circular and the rectangular magnets
+L             = (r_circ + g + l_rect / 2.0)     # length between center of the circ. magnet and center of rect. magnet
+HECTOR_plate  = circle(0.0,0.0,260.0)
+l_robot       = 14.02                           # length of the robot pick-up arm
+w_robot       = 5                               # width of the robot pick-up arm
+l_pickup_circ = l_robot                         # the length of the pickup area for the circular magnet
+w_pickup_circ = (3.0 * w_robot / 2.0) + r_circ  # the width of the pickup rea for the circular magnet
+l_pickup_rect = l_robot                         # the length of the pick up area for the rectangle magnet
+w_pickup_rect = 0.5 * (l_rect + 3.0 * w_robot)  # the width of the pickup area for the rectangle magnet
