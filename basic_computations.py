@@ -1,122 +1,107 @@
 import numpy as np
 import math
-from math import cos, sin
+from math import cos, sin, pi
 import matplotlib.pyplot as plt
 
+def rotational_matrix(rotation_angle):
+    return [[cos(rotation_angle), - sin(rotation_angle)],
+            [sin(rotation_angle),   cos(rotation_angle)]]
+
+def convert_degrees_to_radians(angle_degrees):
+    return angle_degrees * pi /180
+
+def convert_modulus_angle(angle):
+    piX2 = 2 * pi
+
+    if angle > piX2:
+        angle = angle - piX2
+    if angle < 0:
+        angle = piX2 - abs(angle)
+
+    return angle
 
 def calculate_circle_xy_coordinates(center_x, center_y, radius):
 
     x_coordinates = np.arange(center_x - radius, center_x + radius, radius / 100000)
 
     y_coordinates_negative = -np.sqrt(np.abs(radius ** 2 - (x_coordinates - center_x) ** 2)) + center_y
-    y_coordinates_positive = np.sqrt(np.abs(radius ** 2 - (x_coordinates - center_x) ** 2)) + center_y
+    y_coordinates_positive =  np.sqrt(np.abs(radius ** 2 - (x_coordinates - center_x) ** 2)) + center_y
 
     return(x_coordinates,y_coordinates_negative,y_coordinates_positive)
 
-def convert_degrees_to_radians(angle_degrees):
-    return angle_degrees * np.pi /180
+def calculate_center_coordinates_rectangular_magnet(center_x, center_y, rectangle_length,rectangle_magnet_orientation):
 
-def convert_modulus_angle(angle):
-    piX2 = 2 * np.pi
+    if 0 < rectangle_magnet_orientation < pi / 2:
+        rectangle_center_x = center_x + rectangle_length * math.cos(rectangle_magnet_orientation)
+        rectangle_center_y = center_y + rectangle_length * math.sin(rectangle_magnet_orientation)
 
-    if angle < piX2:
-        angle = angle + piX2
-    if angle > piX2:
-        angle = angle - piX2
-    if angle < 0:
-        angle = piX2 - abs(angle)
-    return angle
+    if pi / 2 < rectangle_magnet_orientation < pi:
+        rectangle_center_x = center_x - rectangle_length * math.cos(pi - rectangle_magnet_orientation)
+        rectangle_center_y = center_y + rectangle_length * math.sin(pi - rectangle_magnet_orientation)
 
-def calculate_rectangle_center_xy_coordinates(center_x, center_y, rectangle_length, orientation):
-    '''
-    returns the coordinates of the center of the rect magnet
-    with x1,y1 the coordinates of the center of the circular magnet, L the length between the circ. and rect. magnets,
-    and alpha the absolute angle of the rect. magnet (angle from the x-axis)
-    '''
+    if pi < rectangle_magnet_orientation < 3 * pi / 2:
+        rectangle_center_x = center_x - rectangle_length * math.sin(3 * pi / 2 - rectangle_magnet_orientation)
+        rectangle_center_y = center_y - rectangle_length * math.cos(3 * pi / 2 - rectangle_magnet_orientation)
 
-    rectangle_orientation_in_radians = convert_degrees_to_radians(orientation)
+    if 3 * pi / 2 < rectangle_magnet_orientation < 2 * pi:
+        rectangle_center_x = center_x + rectangle_length * math.cos(2 * pi - rectangle_magnet_orientation)
+        rectangle_center_y = center_y - rectangle_length * math.sin(2 * pi - rectangle_magnet_orientation)
 
-    rectangle_orientation = convert_modulus_angle(rectangle_orientation_in_radians)
+    return (rectangle_center_x, rectangle_center_y)
 
-    # Calculate the center position of the center of the rect. magnets rectangle_center_x rectangle_center_y
-    if 0 < rectangle_orientation < np.pi/2:
-        rectangle_center_x = center_x + rectangle_length * math.cos(rectangle_orientation)
-        rectangle_center_y = center_y + rectangle_length * math.sin(rectangle_orientation)
-    if np.pi/2 < rectangle_orientation < np.pi:
-        rectangle_center_x = center_x - rectangle_length * math.cos(np.pi - rectangle_orientation)
-        rectangle_center_y = center_y + rectangle_length * math.sin(np.pi - rectangle_orientation)
-    if np.pi < rectangle_orientation < 3*np.pi/2:
-        rectangle_center_x = center_x - rectangle_length * math.sin(3 * np.pi / 2 - rectangle_orientation)
-        rectangle_center_y = center_y - rectangle_length * math.cos(3 * np.pi / 2 - rectangle_orientation)
-    if 3*np.pi/2 < rectangle_orientation < 2*np.pi:
-        rectangle_center_x = center_x + rectangle_length * math.cos(2 * np.pi - rectangle_orientation)
-        rectangle_center_y = center_y - rectangle_length * math.sin(2 * np.pi - rectangle_orientation)
+def calculate_rectangle_center_xy_coordinates(center_x, center_y, rectangle_length, rectangle_orientation):
 
-    return rectangle_center_x,rectangle_center_y
+    rectangle_orientation_in_radians = convert_degrees_to_radians(rectangle_orientation)
 
+    rectangle_orientation_modulo = convert_modulus_angle(rectangle_orientation_in_radians)
 
-def drawRect(x0, y0, w, h, angle, col):
-    '''
-    plots a rectangle
-    with x0,y0 the coordinates of the center, w the width, h the height, angle the angle of orientation
-    (angle relative to the vertical axis), col the colour to use for plotting
-    '''
+    rectangle_center_xy_coordinates = calculate_center_coordinates_rectangular_magnet(center_x,center_y,\
+                                                                    rectangle_length,rectangle_orientation_modulo)
 
-    angle = np.deg2rad(angle)
+    return rectangle_center_xy_coordinates
 
-    x_vec = (cos(angle), -sin(angle))
-    y_vec = (sin(angle),  cos(angle))
+def calculate_rectangle_corners_xy_coordinates(rectangle_center_x_coordinate, rectangle_y_coordinate, rectangle_width, rectangle_height,rectangle_orientation):
 
-    a = (x0 - x_vec[0] * w / 2 - y_vec[0] * h / 2, y0 - x_vec[1] * w / 2 - y_vec[1] * h / 2)
+    x_vector = (cos(rectangle_orientation), -sin(rectangle_orientation))
+    y_vector = (sin(rectangle_orientation), cos(rectangle_orientation))
 
-    b = (x0 + x_vec[0] * w / 2 - y_vec[0] * h / 2, y0 + x_vec[1] * w / 2 - y_vec[1] * h / 2)
+    a = (rectangle_center_x_coordinate - x_vector[0] * rectangle_width / 2 - y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate - x_vector[1] * rectangle_width / 2 - y_vector[1] * rectangle_height / 2)
 
-    c = (x0 + x_vec[0] * w / 2 + y_vec[0] * h / 2, y0 + x_vec[1] * w / 2 + y_vec[1] * h / 2)
+    b = (rectangle_center_x_coordinate + x_vector[0] * rectangle_width / 2 - y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate + x_vector[1] * rectangle_width / 2 - y_vector[1] * rectangle_height / 2)
 
-    d = (x0 - x_vec[0] * w / 2 + y_vec[0] * h / 2, y0 - x_vec[1] * w / 2 + y_vec[1] * h / 2)
+    c = (rectangle_center_x_coordinate + x_vector[0] * rectangle_width / 2 + y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate + x_vector[1] * rectangle_width / 2 + y_vector[1] * rectangle_height / 2)
 
-    plt.plot([ a[0], b[0] ], [ a[1], b[1] ], col)
-    plt.plot([ b[0], c[0] ], [ b[1], c[1] ], col)
-    plt.plot([ c[0], d[0] ], [ c[1], d[1] ], col)
-    plt.plot([ d[0], a[0] ], [ d[1], a[1] ], col)
+    d = (rectangle_center_x_coordinate - x_vector[0] * rectangle_width / 2 + y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate - x_vector[1] * rectangle_width / 2 + y_vector[1] * rectangle_height / 2)
 
+    return [a,b,c,d]
+
+def draw_rectangle(rectangle_center_x_coordinate, rectangle_y_coordinate, rectangle_width, rectangle_height, \
+                   rectangle_orientation, plotting_colour):
+
+    rectangle_orientation = np.deg2rad(rectangle_orientation)
+
+    x_vector = (cos(rectangle_orientation), -sin(rectangle_orientation))
+    y_vector = (sin(rectangle_orientation),  cos(rectangle_orientation))
+
+    a = (rectangle_center_x_coordinate - x_vector[0] * rectangle_width / 2 - y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate - x_vector[1] * rectangle_width / 2 - y_vector[1] * rectangle_height / 2)
+
+    b = (rectangle_center_x_coordinate + x_vector[0] * rectangle_width / 2 - y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate + x_vector[1] * rectangle_width / 2 - y_vector[1] * rectangle_height / 2)
+
+    c = (rectangle_center_x_coordinate + x_vector[0] * rectangle_width / 2 + y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate + x_vector[1] * rectangle_width / 2 + y_vector[1] * rectangle_height / 2)
+
+    d = (rectangle_center_x_coordinate - x_vector[0] * rectangle_width / 2 + y_vector[0] * rectangle_height / 2, \
+         rectangle_y_coordinate - x_vector[1] * rectangle_width / 2 + y_vector[1] * rectangle_height / 2)
+
+    plt.plot([ a[0], b[0] ], [ a[1], b[1] ], plotting_colour)
+    plt.plot([ b[0], c[0] ], [ b[1], c[1] ], plotting_colour)
+    plt.plot([ c[0], d[0] ], [ c[1], d[1] ], plotting_colour)
+    plt.plot([ d[0], a[0] ], [ d[1], a[1] ], plotting_colour)
 
     return a,b,c,d
-
-
-def rectangle_corner(x0,y0,width,height,theta):
-    '''
-    Returns the coordinates of the 4 corners of a rectangle
-
-    with x0,y0 the coordinates of the center of the rectangle, width and height the width and height of the rectangle,
-    theta the angle of rotation of the rectangle relative to the vertical axis (?)
-    '''
-
-    # Calculate the diagonal of the rectangle
-    r = 0.5 * np.sqrt( width**2 + height**2 )
-
-    # Calculate the angle of the rectangle diagonal (in the rectangle referencial)
-    alpha = math.acos( width/(2*r) ) * (180 / np.pi)
-
-    # Calculate the different angles of the corners (angles relative to the vertical axis)
-    omega = np.array( [ theta + alpha ,
-                        theta - alpha ,
-                        theta + alpha + 180 ,
-                        theta - alpha + 180 ] )
-
-    # Calculate the coordinates (x,y) of the corners of the rectangle
-    corner = np.array( [x0 + r * np.cos( (np.pi/180) * (180 - omega) ),
-                        y0 + r * np.sin( (np.pi/180) * (180 - omega) )] )
-
-    corner = corner.T
-
-
-    #for i in range(len(omega)):
-    #    plt.plot(corner[0, 0], corner[0, 1], 'xb')
-    #    plt.plot(corner[1, 0], corner[1, 1], 'xc')
-    #    plt.plot(corner[2, 0], corner[2, 1], 'xg')
-    #    plt.plot(corner[3, 0], corner[3, 1], 'xy')
-    #    plt.axis('scaled')
-    #    plt.show()
-
-    return corner

@@ -1,258 +1,208 @@
-from basic_computations import drawRect, calculate_rectangle_center_xy_coordinates, calculate_circle_xy_coordinates
+from basic_computations import draw_rectangle, calculate_rectangle_center_xy_coordinates, calculate_circle_xy_coordinates
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-def drawPickupArea_circ(coordinates,l_robot,w_robot,r_circ):
-    '''
-    draw the different pickup area of the robot arms for the circular magnets
-    with coordinates the coordinates of the areas, l_robot and w_robot the width and length of the robot arm
-    respectively and r_circ the radius of the circular magnet
-    '''
+def draw_circular_magnet_pickup_area(pickuparea_coordinates, robot_arm_length, robot_arm_width, circular_magnet_radius):
 
-    [x_tan_L,   y_tan_L,   ang] = coordinates[0]
-    [x_tan_R,   y_tan_R,   ang] = coordinates[1]
-    [x_rad_in,  y_rad_in,  ang] = coordinates[2]
-    [x_rad_out, y_rad_out, ang] = coordinates[3]
-
-    drawRect(x_tan_L,   y_tan_L,   l_robot, (3.0 * w_robot / 2.0) + r_circ, ang, 'y')
-    drawRect(x_tan_R,   y_tan_R,   l_robot, (3.0 * w_robot / 2.0) + r_circ, ang, 'y')
-    drawRect(x_rad_in,  y_rad_in,  l_robot, (3.0 * w_robot / 2.0) + r_circ, ang, 'y')
-    drawRect(x_rad_out, y_rad_out, l_robot, (3.0 * w_robot / 2.0) + r_circ, ang, 'y')
+    draw_rectangle(pickuparea_coordinates[0][0], pickuparea_coordinates[0][1], robot_arm_length,
+                   (3.0 * robot_arm_width / 2.0) + circular_magnet_radius, pickuparea_coordinates[0][2], 'y')
+    draw_rectangle(pickuparea_coordinates[1][0], pickuparea_coordinates[1][1], robot_arm_length,
+                   (3.0 * robot_arm_width / 2.0) + circular_magnet_radius, pickuparea_coordinates[1][2], 'y')
+    draw_rectangle(pickuparea_coordinates[2][0], pickuparea_coordinates[2][1], robot_arm_length,
+                   (3.0 * robot_arm_width / 2.0) + circular_magnet_radius, pickuparea_coordinates[2][2], 'y')
+    draw_rectangle(pickuparea_coordinates[3][0], pickuparea_coordinates[3][1], robot_arm_length,
+                   (3.0 * robot_arm_width / 2.0) + circular_magnet_radius, pickuparea_coordinates[3][2], 'y')
 
 
-def drawPickupArea_rect(coordinates,l_robot,w_robot,l_rect):
-    '''
-    draw the different pickup area of the robot arms for the circular magnets
+def draw_rectangular_magnet_pickup_area(pickuparea_coordinates, robot_arm_length, robot_arm_width, rectangle_magnet_length):
 
-    :param coordinates: coordinates of the areas
-    :param l_robot: robot arm length
-    :param w_robot: robot arm width
-    :param l_rect: length of the rectangular magnet
+    draw_rectangle(pickuparea_coordinates[0][0], pickuparea_coordinates[0][1], robot_arm_length,
+                   0.5 * (rectangle_magnet_length + 3.0 * robot_arm_width), pickuparea_coordinates[0][2], 'c')
+    draw_rectangle(pickuparea_coordinates[1][0], pickuparea_coordinates[1][1], robot_arm_length,
+                   0.5 * (rectangle_magnet_length + 3.0 * robot_arm_width), pickuparea_coordinates[1][2], 'c')
 
-    '''
-
-    [x_out, y_out, ang_r] = coordinates[0]
-    [x_in,  y_in,  ang_r] = coordinates[1]
-
-    drawRect(x_out, y_out, l_robot, 0.5 * (l_rect + 3.0 * w_robot), ang_r, 'c')
-    drawRect(x_in,  y_in,  l_robot, 0.5 * (l_rect + 3.0 * w_robot), ang_r, 'c')
-
-
-def draw_robot_arm(mag, w_robot, l_robot):
-    '''
-    Draw the robot arm on top of the magnets (two orientation possible for the circular magnets)
-
-    :param mag: coordinates (x,y,orientation angle) of the magnet
-    :param w_robot: width of the robot arm
-    :param l_robot: length of the robot arm
-    :return:
-    '''
+def draw_robot_arm(magnet_list, robot_arm_width, robot_arm_length):
 
     i = 0
-    for magnet in mag:
+    for magnet in magnet_list:
 
-        if magnet[3] == 0:
-            x_c = mag[i][0]
-            y_c = mag[i][1]
-            ang_c = mag[i][2]
+        if circular_magnet(magnet):
 
-            # Draw the robot arm on top of the circular magnets (two orientation possible: radial/tangential)
-            # circ_robot = drawRect(x1, y1, w_robot, l_robot, 90, 'm')
-            drawRect(x_c, y_c, w_robot, l_robot, - ang_c, 'c')
-            drawRect(x_c, y_c, w_robot, l_robot, - ang_c + 90, 'c')
+            draw_rectangle(magnet_list[i][0], magnet_list[i][1], robot_arm_width,robot_arm_length, - magnet_list[i][2], 'g')
+            draw_rectangle(magnet_list[i][0], magnet_list[i][1], robot_arm_width,robot_arm_length, - magnet_list[i][2] + 90, 'g')
 
-        if magnet[3] == 1:
-            x_r = mag[i][0]
-            y_r = mag[i][1]
-            ang_r = mag[i][2]
+        if rectangle_magnet(magnet):
 
-            # Draw the robot arm on top of the rect. magnets
-            drawRect(x_r, y_r, w_robot, l_robot, ang_r + 90, 'c')
+            draw_rectangle(magnet_list[i][0], magnet_list[i][1], robot_arm_width, robot_arm_length,  magnet_list[i][2] + 90, 'g')
 
         i += 1
 
 
-def extract_positions(probe,x,y,angs_azAng,L):
-    '''
-    Extract the coordinates of the magnets
+def extract_magnets_positions(probe, circular_magnet_center_coordinate_x, circular_magnet_center_y_coordinate,
+                              rectangle_magnet_orientation, circular_rectangle_magnet_center_distance):
 
-    :param probe:
-    :param x: coordinates of the circular magnet
-    :param y: coordinates of the circular magnet
-    :param angs_azAng: angle of the rectangular magnet
-    :param L:
-    :return:
-    '''
+    circular_magnets    = []
+    rectangular_magnets = []
 
-    mag_c = []
-    mag_r = []
+    for magnet in probe:
 
-    for i in probe:
+        circular_magnet_center_x = circular_magnet_center_coordinate_x[int(magnet) - 1] * 260.0
+        circular_magnet_center_y = circular_magnet_center_y_coordinate[int(magnet) - 1] * 260.0
 
-        # Get circular magent's center x and y positions
-        x_c = x[int(i) - 1] * 260.0
-        y_c = y[int(i) - 1] * 260.0
+        if circular_magnet_center_x > 0 and circular_magnet_center_y > 0:
+            circular_magnet_rotational_angle = math.atan(np.abs(circular_magnet_center_y / circular_magnet_center_x))
 
-        # Calculate the angle of the radius (containing the circular magnet)
-        if x_c and y_c > 0:
-            rot_angle = math.atan(np.abs(y_c / x_c))
-        if x_c < 0 and y_c > 0:
-            rot_angle = np.pi - math.atan(np.abs(y_c / x_c))
-        if x_c < 0 and y_c < 0:
-            rot_angle = np.pi + math.atan(np.abs(y_c / x_c))
-        if x_c > 0 and y_c < 0:
-            rot_angle = 2 * np.pi - math.atan(np.abs(y_c / x_c))
+        elif circular_magnet_center_x < 0 and circular_magnet_center_y > 0:
+            circular_magnet_rotational_angle = np.pi - math.atan(np.abs(circular_magnet_center_y / circular_magnet_center_x))
+
+        elif circular_magnet_center_x < 0 and circular_magnet_center_y < 0:
+            circular_magnet_rotational_angle = np.pi + math.atan(np.abs(circular_magnet_center_y / circular_magnet_center_x))
+
+        elif circular_magnet_center_x > 0 and circular_magnet_center_y < 0:
+            circular_magnet_rotational_angle = 2 * np.pi - math.atan(np.abs(circular_magnet_center_y / circular_magnet_center_x))
+
         # Convert into degrees
-        angle = rot_angle * (180 / np.pi)
+        circular_magnet_rotational_angle = circular_magnet_rotational_angle * (180 / np.pi)
 
-        mag_c.append([x_c, y_c,angle,0,probe[int(i)-1]])
+        circular_magnets.append([circular_magnet_center_x, circular_magnet_center_y,circular_magnet_rotational_angle,\
+                                 0,probe[int(magnet)-1]])
 
         # From the file fetch the angle of the rectangular magnet (angle relative to the tangent of the radius -
         # See Olivia's notes for details)
-        theta = angs_azAng[int(i) - 1] * (180 / np.pi) + 90
+        theta = rectangle_magnet_orientation[int(magnet) - 1] * (180 / np.pi) + 90
 
         # The angle of the rectangular magnet (absolute)
-        alpha = angle + theta - 90
+        alpha = circular_magnet_rotational_angle + theta - 90
 
-        [x_r, y_r] = calculate_rectangle_center_xy_coordinates(x_c, y_c, L, alpha)
+        [x_r, y_r] = calculate_rectangle_center_xy_coordinates(circular_magnet_center_x, circular_magnet_center_y, circular_rectangle_magnet_center_distance, alpha)
 
         ang_r = 90 - alpha
 
-        mag_r.append([x_r,y_r,ang_r,1,probe[int(i)-1]])
+        rectangular_magnets.append([x_r,y_r,ang_r,1,probe[int(magnet)-1]])
 
-    return mag_c, mag_r
+    return circular_magnets, rectangular_magnets
 
+def calculate_circular_magnet_pickup_area(robot_arm_width, circular_magnet_radius, magnet):
 
-def pickupArea_circ(w_robot,r_circ,mag):
-    '''
-    Circular magnets can be picked-up in 4 different manners:
-    along the radial direction, towards the center of the plate:                                rad_out
-    along the radial direction, away from the center of the plate:                              rad_in
-    tangentially from the radial direction, from the left (looking towards center of plate):    tan_L
-    tangentially from the radial direction, from the right (looking towards center of plate):   tan_R
+    # Calculate the hypotenuse of the triangle between the center of the circular magnet to the center fo the pickup_areas
+    # and the projected center of the pickup_areas on the vertical axis
+    h = 0.5 * (0.5 * robot_arm_width + circular_magnet_radius)
 
-    For each possibility a rectangle area is calculated that corresponds to the area needed by the robot arm
-    to pickup the magnets
+    circular_center_x_coordinate = magnet[0]
+    circular_center_y_coordinate = magnet[1]
+    circular_magnet_orientation  = magnet[2]
 
-    :param w_robot: width of the robot arm
-    :param r_circ: radius of the circular magnet
-    :param mag: oordinates of the circular magnet (x_c,y_c,ang_c)
-    :return:
-    '''
+    pickuparea_tangential_right_x_coordinate = \
+    circular_center_x_coordinate + h * math.sin((np.pi / 180) * (- circular_magnet_orientation))
+    pickuparea_tangential_right_y_coordinate = \
+    circular_center_y_coordinate + h * math.cos((np.pi / 180) * (- circular_magnet_orientation))
 
-    # Calculate the hypotenuse of the triangle between the center of the circular magnet to the center fo the area
-    # and the projected center of the area on the vertical axis
-    h = 0.5 * (0.5 * w_robot + r_circ)
+    pickuparea_tangential_left_x_coordinate = \
+    circular_center_x_coordinate - h * math.sin((np.pi / 180) * (- circular_magnet_orientation))
+    pickuparea_tangential_left_y_coordinate = \
+    circular_center_y_coordinate - h * math.cos((np.pi / 180) * (- circular_magnet_orientation))
 
-    x_c   = mag[0]
-    y_c   = mag[1]
-    ang_c = mag[2]
+    pickuparea_radial_inward_x_coordinate = \
+    circular_center_x_coordinate + h * math.sin((np.pi / 180) * (90 - circular_magnet_orientation))
+    pickuparea_radial_inward_y_coordinate = \
+    circular_center_y_coordinate + h * math.cos((np.pi / 180) * (90 - circular_magnet_orientation))
 
-    x_area_tan_R = x_c + h * math.sin((np.pi / 180) * (- ang_c))
-    y_area_tan_R = y_c + h * math.cos((np.pi / 180) * (- ang_c))
+    pickuparea_radial_outward_x_coordinate = \
+    circular_center_x_coordinate - h * math.sin((np.pi / 180) * (90 - circular_magnet_orientation))
+    pickuparea_radial_outward_y_coordinate = \
+    circular_center_y_coordinate - h * math.cos((np.pi / 180) * (90 - circular_magnet_orientation))
 
-    x_area_tan_L = x_c - h * math.sin((np.pi / 180) * (- ang_c))
-    y_area_tan_L = y_c - h * math.cos((np.pi / 180) * (- ang_c))
+    pickup_areas = \
+    [[pickuparea_tangential_right_x_coordinate, pickuparea_tangential_right_y_coordinate, -circular_magnet_orientation],
+    [pickuparea_tangential_left_x_coordinate,   pickuparea_tangential_left_y_coordinate,  -circular_magnet_orientation],
+    [pickuparea_radial_inward_x_coordinate,     pickuparea_radial_inward_y_coordinate,    -circular_magnet_orientation],
+    [pickuparea_radial_outward_x_coordinate,    pickuparea_radial_outward_y_coordinate,   -circular_magnet_orientation]]
 
-    x_area_rad_in = x_c + h * math.sin((np.pi / 180) * (90 - ang_c))
-    y_area_rad_in = y_c + h * math.cos((np.pi / 180) * (90 - ang_c))
+    return pickup_areas
 
-    x_area_rad_out = x_c - h * math.sin((np.pi / 180) * (90 - ang_c))
-    y_area_rad_out = y_c - h * math.cos((np.pi / 180) * (90 - ang_c))
+def calculate_center_coordinate_outward_pickuparea_rectangle_magnet(rectangle_center_x_coordinate,
+                                                        rectangle_center_y_coordinate,h,rectangle_orientation):
 
-    area = [[x_area_tan_R,   y_area_tan_R,   -ang_c],
-            [x_area_tan_L,   y_area_tan_L,   -ang_c],
-            [x_area_rad_in,  y_area_rad_in,  -ang_c],
-            [x_area_rad_out, y_area_rad_out, -ang_c]]
+    center_x_coordinate = rectangle_center_x_coordinate + h * math.sin((np.pi / 180.0) * (rectangle_orientation))
+    center_y_coordinate = rectangle_center_y_coordinate + h * math.cos((np.pi / 180.0) * (rectangle_orientation))
 
-    return area
+    return center_x_coordinate,center_y_coordinate
 
+def calculate_center_coordinate_inward_pickuparea_rectangle_magnet(rectangle_center_x_coordinate,
+                                                                rectangle_center_y_coordinate,h,rectangle_orientation):
 
-def pickupArea_rec(w_robot,l_robot,l_rect,mag):
-    '''
-    Rectangular magnets can be picked-up in 2 different manners:
-    towards the circular magnet:                                in
-    away from the circular magnet:                              out
+    center_x_coordinate = rectangle_center_x_coordinate - h * math.sin((np.pi / 180.0) * (rectangle_orientation))
+    center_y_coordinate = rectangle_center_y_coordinate - h * math.cos((np.pi / 180.0) * (rectangle_orientation))
 
-    For each possibility a rectangle area is calculated that corresponds to the area needed by the robot arm
-    to pickup the magnets
+    return center_x_coordinate,center_y_coordinate
 
-    :param w_robot: width of the robot arm
-    :param l_robot: length of the robot arm
-    :param l_rect: length of the rectangular magnet
-    :param mag: coordinates of the rectangular magnet (x_r,y_r,ang_r)
-    :return:
-    '''
+def calculate_rectangle_magnet_pickup_area(robot_arm_width, rectangle_magnet_length, magnet):
 
-    # Calculate the hypotenuse of the triangle between the center of the rectangular magnet to the center fo the area
+    # Calculate the hypotenuse of the triangle between the center of the rectangular magnet to the center of the area
     # and the projected center of the area on the vertical axis - See Tiph's notes
-    h = 0.25 * (l_rect + w_robot)
+    h = 0.25 * (rectangle_magnet_length + robot_arm_width)
 
-    x_r   = mag[0]
-    y_r   = mag[1]
-    ang_r = mag[2]
+    rectangle_center_x_coordinate = magnet[0]
+    rectangle_center_y_coordinate = magnet[1]
+    rectangle_orientation         = magnet[2]
 
-    # Calculate the center of the pickup area
-    x_out = x_r + h * math.sin((np.pi / 180.0) * (ang_r))
-    y_out = y_r + h * math.cos((np.pi / 180.0) * (ang_r))
+    outward_pickup_area_rectangle_magnet = calculate_center_coordinate_outward_pickuparea_rectangle_magnet(
+        rectangle_center_x_coordinate,rectangle_center_y_coordinate,h,rectangle_orientation)
 
-    x_in = x_r - h * math.sin((np.pi / 180.0) * (ang_r))
-    y_in = y_r - h * math.cos((np.pi / 180.0) * (ang_r))
+    inward_pickup_area_rectangle_magnet = calculate_center_coordinate_inward_pickuparea_rectangle_magnet(
+        rectangle_center_x_coordinate,rectangle_center_y_coordinate,h,rectangle_orientation)
 
-    area = [[x_out, y_out, ang_r],
-            [x_in,  y_in,  ang_r]]
+    area = [ [outward_pickup_area_rectangle_magnet[0], outward_pickup_area_rectangle_magnet[1], rectangle_orientation],
+             [inward_pickup_area_rectangle_magnet[0],  inward_pickup_area_rectangle_magnet[1],  rectangle_orientation]]
 
     return area
 
+def circular_magnet(magnet):
 
-def plot_magnets(r_circ,w_rect,l_rect,mag,c):
-    '''
-    plots the magnets
+    return magnet[3] == 0
 
-    :param r_circ: radius of the circular magnets
-    :param w_rect: width of the rectangular magnets
-    :param l_rect: length of the rectangular magnets
-    :param mag: coordinates of the magnets (x,y and orientation angle, 0: circ or 1:rect)
-    :param c: colour for plotting
-    :return:
-    '''
+def rectangle_magnet(magnet):
+
+    return magnet[3] == 1
+
+def plot_magnets(circular_magnet_radius, rectangle_magnet_width, rectangle_magnet_length, magnets_list, plotting_colour):
 
     i = 0
-    for magnet in mag:
+    for magnet in magnets_list:
 
-        if magnet[3] == 0:
-            # Plot the circular magnets
-            x_c = mag[i][0]
-            y_c = mag[i][1]
+        if circular_magnet(magnet):
 
-            magnet_circ = calculate_circle_xy_coordinates(x_c, y_c, r_circ)
+            magnet_center_x_coordinate = magnets_list[i][0]
+            magnet_center_y_coordinate = magnets_list[i][1]
 
-            plt.plot(magnet_circ[0], magnet_circ[1], c)
-            plt.plot(magnet_circ[0], magnet_circ[2], c)
+            circular_magnet_coordinates = calculate_circle_xy_coordinates(magnet_center_x_coordinate,
+                                                                    magnet_center_y_coordinate, circular_magnet_radius)
 
-        if magnet[3] == 1:
-            # Plot the rectangular magnet
-            x_r   = mag[i][0]
-            y_r   = mag[i][1]
-            ang_r = mag[i][2]
+            plt.plot(circular_magnet_coordinates[0], circular_magnet_coordinates[1], plotting_colour)
+            plt.plot(circular_magnet_coordinates[0], circular_magnet_coordinates[2], plotting_colour)
+            plt.text(magnet_center_x_coordinate, magnet_center_y_coordinate, str(i+1), fontsize=6)
 
-            drawRect(x_r, y_r, w_rect, l_rect, ang_r, c)
+        if rectangle_magnet(magnet):
+
+            rectangle_center_x_coordinate = magnets_list[i][0]
+            rectangle_center_y_coordinate = magnets_list[i][1]
+            rectangle_orientation = magnets_list[i][2]
+
+            draw_rectangle(rectangle_center_x_coordinate, rectangle_center_y_coordinate, rectangle_magnet_width,
+                           rectangle_magnet_length, rectangle_orientation, plotting_colour)
+
 
         i += 1
 
 
 def plot_plate(HECTOR_plate):
-    '''
-    plots HECTOR plate
-    '''
 
     plt.figure()
 
-    # Plot the plate
     plt.plot(HECTOR_plate[0], HECTOR_plate[1], 'r')
     plt.plot(HECTOR_plate[0], HECTOR_plate[2], 'r')
-    plt.plot(0, 0, 'x')
+    #plt.plot(0, 0, 'x')
 
     plt.axis('scaled')
     plt.axis([-270, 270, -270, 270])
