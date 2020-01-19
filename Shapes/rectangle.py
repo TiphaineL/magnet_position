@@ -7,11 +7,11 @@ class rectangle:
         self.center = center
         self.length = length
         self.width = width
-        self.orientation = convert_degrees_to_radians(orientation)
+        self.orientation = orientation
 
     def rectangle_4corners(self):
 
-        rotation_matrix = rotational_matrix(self.orientation)
+        rotation_matrix = rotational_matrix(convert_degrees_to_radians(self.orientation))
 
         self.corner1 = (self.center[0] - rotation_matrix[0][0] * self.width / 2 - rotation_matrix[1][0] * self.length / 2, \
                         self.center[1] - rotation_matrix[0][1] * self.width / 2 - rotation_matrix[1][1] * self.length / 2)
@@ -26,14 +26,14 @@ class rectangle:
                         self.center[1] - rotation_matrix[0][1] * self.width / 2 + rotation_matrix[1][1] * self.length / 2)
 
 
-    def draw_rectangle(self):
+    def draw_rectangle(self,colour):
 
         rectangle.rectangle_4corners(self)
 
-        plt.plot([self.corner1[0], self.corner2[0]], [self.corner1[1], self.corner2[1]], 'r')
-        plt.plot([self.corner2[0], self.corner3[0]], [self.corner2[1], self.corner3[1]], 'r')
-        plt.plot([self.corner3[0], self.corner4[0]], [self.corner3[1], self.corner4[1]], 'r')
-        plt.plot([self.corner4[0], self.corner1[0]], [self.corner4[1], self.corner1[1]], 'r')
+        plt.plot([self.corner1[0], self.corner2[0]], [self.corner1[1], self.corner2[1]], colour)
+        plt.plot([self.corner2[0], self.corner3[0]], [self.corner2[1], self.corner3[1]], colour)
+        plt.plot([self.corner3[0], self.corner4[0]], [self.corner3[1], self.corner4[1]], colour)
+        plt.plot([self.corner4[0], self.corner1[0]], [self.corner4[1], self.corner1[1]], colour)
         plt.axis('scaled')
 
     def plot_corners(self):

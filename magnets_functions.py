@@ -19,6 +19,7 @@ def draw_rectangular_magnet_pickup_area(pickuparea_coordinates, robot_arm_length
 
     draw_rectangle(pickuparea_coordinates[0][0], pickuparea_coordinates[0][1], robot_arm_length,
                    0.5 * (rectangle_magnet_length + 3.0 * robot_arm_width), pickuparea_coordinates[0][2], 'c')
+
     draw_rectangle(pickuparea_coordinates[1][0], pickuparea_coordinates[1][1], robot_arm_length,
                    0.5 * (rectangle_magnet_length + 3.0 * robot_arm_width), pickuparea_coordinates[1][2], 'c')
 

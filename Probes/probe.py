@@ -4,6 +4,7 @@ import numpy as np
 from Operations.trigonometry import convert_radians_to_degrees, convert_modulus_angle, convert_degrees_to_radians
 from Magnets.circular_magnet import circular_magnet
 from Magnets.rectangular_magnet import rectangular_magnet
+
 class probe:
 
     def __init__(self, probe_index, circular_magnet_center, rectangular_magnet_input_orientation):
@@ -33,7 +34,7 @@ class probe:
         elif self.circular_magnet_center[0] > 0 and self.circular_magnet_center[1] < 0:
 
             self.circular_magnet_orientation = \
-            2 * np.pi - atan(np.abs(self.circular_magnet_center[1] / self.circular_magnet_center[0]))
+            2 * pi - atan(np.abs(self.circular_magnet_center[1] / self.circular_magnet_center[0]))
 
         self.circular_magnet_orientation = convert_radians_to_degrees(self.circular_magnet_orientation)
 

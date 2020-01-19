@@ -4,6 +4,6 @@ def draw_all_magnets(circular_magnets,rectangular_magnets):
         magnet.draw_circle()
 
     for magnet in rectangular_magnets:
-        magnet.draw_rectangle()
+        magnet.draw_rectangle('r')
 
 
