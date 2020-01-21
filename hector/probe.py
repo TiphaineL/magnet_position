@@ -1,9 +1,9 @@
-from constants import circular_rectangle_magnet_center_distance
+from hector.constants import circular_rectangle_magnet_center_distance
 from math import pi, cos, sin, atan
 import numpy as np
-from Operations.trigonometry import convert_radians_to_degrees, convert_modulus_angle, convert_degrees_to_radians
-from Magnets.circular_magnet import circular_magnet
-from Magnets.rectangular_magnet import rectangular_magnet
+from operations.trigonometry import convert_radians_to_degrees, convert_modulus_angle, convert_degrees_to_radians
+from hector.magnets.circular import circular_magnet
+from hector.magnets.rectangular import rectangular_magnet
 
 class probe:
 
@@ -91,19 +91,8 @@ class probe:
         return np.array(self.rectangular_magnet_center)
 
     def extract_circular_magnet_parameters(self):
-        return circular_magnet(self.circular_magnet_center, probe.calculate_circular_magnet_orientation(self))
-        #return (self.circular_magnet_center, probe.calculate_circular_magnet_orientation(self))
+        return circular_magnet(self.circular_magnet_center, probe.calculate_circular_magnet_orientation(self),self.index)
 
     def extract_rectangular_magnet_parameters(self):
         return rectangular_magnet(probe.calculate_rectangular_magnet_center_coordinates(self),
-                                  probe.calculate_rectangular_magnet_orientation(self))
-        #return (probe.calculate_rectangular_magnet_center_coordinates(self),probe.calculate_rectangular_magnet_orientation(self))
-
-    #def extract_magnets_parameters(self):
-
-    #   circular_magnet_parameter  = (self.circular_magnet_center,probe.calculate_circular_magnet_orientation(self))
-
-     #  rectangular_magnet_parameter = (probe.calculate_rectangular_magnet_center_coordinates(self),
-     #                     probe.calculate_rectangular_magnet_orientation(self))
-
-     #  return [circular_magnet_parameter,rectangular_magnet_parameter]
+                                  probe.calculate_rectangular_magnet_orientation(self),self.index)

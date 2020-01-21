@@ -1,5 +1,5 @@
 import numpy as np
-from Probes.probe import probe
+from hector.probe import probe
 
 def create_list_of_probes_from_file(file):
 
@@ -22,7 +22,7 @@ def create_list_of_probes_from_file(file):
 
     return list_of_probes
 
-def create_list_of_magnets_from_file(file):
+def create_list_of_circuar_and_rectangular_magnets_from_file(file):
 
     list_of_probes = create_list_of_probes_from_file(file)
 
@@ -38,4 +38,11 @@ def create_list_of_magnets_from_file(file):
 
     return list_of_circular_magnet,list_of_rectangular_magnet
 
+def create_list_of_all_magnets_from_file(file):
 
+    [circular_magnets, rectangular_magnets] = create_list_of_circuar_and_rectangular_magnets_from_file(file)
+
+    return np.concatenate([circular_magnets, rectangular_magnets])
+
+def get_file(filename):
+    return open(filename, "r")
