@@ -79,3 +79,5 @@ def find_all_blocked_magnets(list_of_magnets):
 
         if len(magnet_conflict) > 0:
             blocked_areas.extend(magnet_conflict)
+
+    return blocked_areas

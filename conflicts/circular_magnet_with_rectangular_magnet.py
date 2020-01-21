@@ -15,17 +15,17 @@ def circle_blocking_rectangle(circle,rectangle):
 
         if points:
 
-            #plt.figure()
-            #circle.draw_circle('r')
-            #plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            plt.figure()
+            circle.draw_circle('r')
+            plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
 
-            #rectangle.draw_rectangle('c')
-            #plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            rectangle.draw_rectangle('c')
+            plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
 
             pickup_area.draw_rectangle('r')
 
-            #for point in points:
-            #    plt.plot(point[0],point[1],'or')
+            for point in points:
+               plt.plot(point[0],point[1],'or')
 
             all_blocked_pickup_areas.append(blocked_magnet(circle,rectangle,pickup_area))
 
@@ -41,17 +41,17 @@ def rectangle_blocking_circle(circle,rectangle):
 
         if points:
 
-            #plt.figure()
-            #circle.draw_circle('r')
-            #plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            plt.figure()
+            circle.draw_circle('r')
+            plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
 
-            #rectangle.draw_rectangle('c')
-            #plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            rectangle.draw_rectangle('c')
+            plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
 
             pickup_area.draw_rectangle('r')
 
-            #for point in points:
-            #    plt.plot(point[0],point[1],'or')
+            for point in points:
+               plt.plot(point[0],point[1],'or')
 
             all_blocked_pickup_areas.append(blocked_magnet(rectangle,circle,pickup_area))
 

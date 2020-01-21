@@ -24,4 +24,3 @@ blocked_magnets = find_all_blocked_magnets(magnets_in_close_proximity)
 
 
 
-
