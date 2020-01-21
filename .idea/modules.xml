@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/My_code.iml" filepath="$PROJECT_DIR$/.idea/My_code.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../magnet_position_and_conflict/.idea/hector.iml" filepath="$PROJECT_DIR$/../magnet_position_and_conflict/.idea/hector.iml" />
     </modules>
   </component>
 </project>
