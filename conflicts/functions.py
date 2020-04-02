@@ -2,10 +2,11 @@ from conflicts.magnet_pair import circle_and_circle_magnets, circle_rectangle_ma
 from conflicts.circular_magnet_with_circular_magnet import check_conflict_circle_circle_magnets
 from conflicts.circular_magnet_with_rectangular_magnet import check_conflict_circle_rectangle_magnets
 from conflicts.rectangular_magnet_and_rectangular_magnet import check_conflict_rectangle_rectangle_magnets
+from conflicts.blocked_magnet import circular_magnet_is_fully_blocked,rectangular_magnet_is_fully_blocked
 from hector.constants import rectangle_magnet_length, robot_arm_width
 import numpy as np
-from hector.magnets.rectangular import rectangular_magnet
-from hector.magnets.circular import circular_magnet
+from hector.magnets.rectangular import rectangular_magnet, is_rectangular_magnet
+from hector.magnets.circular import circular_magnet, is_circular_magnet
 
 def minimum_magnet_proximity():
     return rectangle_magnet_length + robot_arm_width
@@ -69,11 +70,11 @@ def find_conflicts_between_magnets(pair):
 
     return all_blocked_pickup_areas
 
-def find_all_blocked_magnets(list_of_magnets):
+def find_all_blocked_magnets(magnet_pairs):
 
     blocked_areas = []
 
-    for pair in list_of_magnets:
+    for pair in magnet_pairs:
 
         magnet_conflict = find_conflicts_between_magnets(pair)
 
@@ -81,3 +82,65 @@ def find_all_blocked_magnets(list_of_magnets):
             blocked_areas.extend(magnet_conflict)
 
     return blocked_areas
+
+def is_magnet_fully_blocked(magnet,blocked_pickup_areas):
+
+    if is_circular_magnet(magnet):
+        magnet_is_fuly_blocked = circular_magnet_is_fully_blocked(blocked_pickup_areas)
+
+    elif is_rectangular_magnet(magnet):
+        magnet_is_fuly_blocked = rectangular_magnet_is_fully_blocked(blocked_pickup_areas)
+
+    return magnet_is_fuly_blocked
+
+def create_list_of_blocked_pickup_areas(magnet, conflicted_magnet_list):
+
+    blocked_pickup_areas = []
+
+    for conflict in conflicted_magnet_list:
+
+        if magnet == conflict.blocked_magnet:
+            blocked_pickup_areas.append(conflict.blocked_pickup_area)
+
+    return blocked_pickup_areas
+
+def remove_multiple_occurrences_in_list(object_list):
+    return list(set(object_list))
+
+def create_list_of_fully_blocked_magnets(list_of_blocked_magnets):
+
+    fully_blocked_magnets = []
+
+    for conflict in list_of_blocked_magnets:
+
+        blocked_pickup_areas = create_list_of_blocked_pickup_areas(conflict.blocked_magnet, list_of_blocked_magnets)
+
+        if is_magnet_fully_blocked(conflict.blocked_magnet,blocked_pickup_areas):
+
+            fully_blocked_magnets.append(conflict.blocked_magnet)
+
+    return remove_multiple_occurrences_in_list(fully_blocked_magnets)
+
+def create_list_of_blocking_magnets(list_of_conflicts, blocked_magnet):
+
+    blocking_magnets = []
+
+    for conflict in list_of_conflicts:
+
+        if conflict.blocked_magnet == blocked_magnet:
+            blocking_magnets.append(conflict.blocking_magnet)
+
+    return remove_multiple_occurrences_in_list(blocking_magnets)
+
+def blocking_magnet_is_fully_blocked(blocking_magnet, list_of_fully_blocked_magnets):
+    return blocking_magnet in list_of_fully_blocked_magnets
+
+def all_blocking_magnets_are_fully_blocked(list_of_blocking_magnets,list_of_fully_blocked_magnets):
+
+    all_blocking_magnets_are_fully_blocked = True
+
+    for blocking_magnet in list_of_blocking_magnets:
+        all_blocking_magnets_are_fully_blocked *= blocking_magnet_is_fully_blocked(blocking_magnet, list_of_fully_blocked_magnets)
+
+    return all_blocking_magnets_are_fully_blocked
+

@@ -10,6 +10,7 @@ class circular_magnet(circle):
         radius = circular_magnet_radius
         super().__init__(center,radius,orientation)
         self.index = index
+        self.placement_index = 0
 
     def calculate_center_magnet_to_center_pickup_area_length(self):
 
@@ -61,3 +62,4 @@ class circular_magnet(circle):
 
 def is_circular_magnet(magnet):
     return isinstance(magnet, circular_magnet)
+

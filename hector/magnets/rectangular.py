@@ -10,6 +10,7 @@ class rectangular_magnet(rectangle):
         width  = rectangle_magnet_width
         super().__init__(center,length,width,orientation)
         self.index = index
+        self.placement_index = 0
 
     def calculate_center_magnet_to_center_pickup_area_length(self):
 

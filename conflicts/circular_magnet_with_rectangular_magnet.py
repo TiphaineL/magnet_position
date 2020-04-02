@@ -1,4 +1,4 @@
-from conflicts.blocked_magnet import blocked_magnet
+from conflicts.blocked_magnet import conflicted_magnet
 from operations.intersections.circle_with_rectangle import circle_rectangle_intersection
 from operations.intersections.rectangle_with_rectangle import rectangle_rectangle_intersection
 from hector.magnets.circular import is_circular_magnet
@@ -9,25 +9,25 @@ def circle_blocking_rectangle(circle,rectangle):
 
     all_blocked_pickup_areas = []
 
-    for pickup_area in rectangle.create_pickup_areas():
+    for pickup_area in rectangle.pickup_areas:
 
         points = circle_rectangle_intersection(circle, pickup_area)
 
         if points:
 
-            plt.figure()
-            circle.draw_circle('r')
-            plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            # plt.figure()
+            # circle.draw_circle('r')
+            # plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            #
+            # rectangle.draw_rectangle('c')
+            # plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            #
+            # pickup_area.draw_rectangle('r')
 
-            rectangle.draw_rectangle('c')
-            plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            # for point in points:
+            #    plt.plot(point[0],point[1],'or')
 
-            pickup_area.draw_rectangle('r')
-
-            for point in points:
-               plt.plot(point[0],point[1],'or')
-
-            all_blocked_pickup_areas.append(blocked_magnet(circle,rectangle,pickup_area))
+            all_blocked_pickup_areas.append(conflicted_magnet(circle, rectangle, pickup_area))
 
     return all_blocked_pickup_areas
 
@@ -35,25 +35,25 @@ def rectangle_blocking_circle(circle,rectangle):
 
     all_blocked_pickup_areas = []
 
-    for pickup_area in circle.create_pickup_areas():
+    for pickup_area in circle.pickup_areas:
 
         points = rectangle_rectangle_intersection(rectangle, pickup_area)
 
         if points:
 
-            plt.figure()
-            circle.draw_circle('r')
-            plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            # plt.figure()
+            # circle.draw_circle('r')
+            # plt.text(circle.center[0], circle.center[1],str(int(circle.index)), fontsize=6)
+            #
+            # rectangle.draw_rectangle('c')
+            # plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            #
+            # pickup_area.draw_rectangle('r')
 
-            rectangle.draw_rectangle('c')
-            plt.text(rectangle.center[0], rectangle.center[1],str(int(rectangle.index)), fontsize=6)
+            # for point in points:
+            #   plt.plot(point[0],point[1],'or')
 
-            pickup_area.draw_rectangle('r')
-
-            for point in points:
-               plt.plot(point[0],point[1],'or')
-
-            all_blocked_pickup_areas.append(blocked_magnet(rectangle,circle,pickup_area))
+            all_blocked_pickup_areas.append(conflicted_magnet(rectangle, circle, pickup_area))
 
     return all_blocked_pickup_areas
 

@@ -9,12 +9,12 @@ create_list_of_probes_from_file(file)
 
 ---
 
-When ran, main.py returns a list of objects: blocked_magnet 
+When ran, main.py returns a list of objects: conflicted_magnet 
 
 with parameters: 
 
-blocked_magnet.blocking_magnet  # the blocking magnet 
+conflicted_magnet.blocking_magnet  # the blocking magnet 
 
-blocked_magnet.blocked_magnet   # the blocked magnet 
+conflicted_magnet.conflicted_magnet   # the blocked magnet 
 
-blocked_magnet.pickup_area      # the pickup area that is blocked 
+conflicted_magnet.pickup_area      # the pickup area that is blocked 
