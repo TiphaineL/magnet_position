@@ -25,7 +25,7 @@ print_fully_blocked_magnets(fully_blocked_magnets)
 positioning_array = create_positioning_array(all_magnets, fully_blocked_magnets, conflicted_magnets)
 
 import csv
-with open('textfile.csv','w') as f:
+with open('magnets_positioning_order.csv','w') as f:
     writer = csv.writer(f, delimiter='\t')
     writer.writerows(positioning_array)
 quit()
