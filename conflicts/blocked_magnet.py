@@ -58,6 +58,6 @@ def rectangular_magnet_is_fully_blocked(list_of_blocked_pickup_areas):
         return False
 
 def print_fully_blocked_magnets(fully_blocked_magnets):
-    print('Fully bloced magnets:')
+    print('Fully blocked magnets:')
     for magnet in fully_blocked_magnets:
         print(magnet.__class__.__name__,int(magnet.index))

@@ -70,7 +70,9 @@ def find_conflicts_between_magnets(pair):
 
     return all_blocked_pickup_areas
 
-def find_all_blocked_magnets(magnet_pairs):
+def find_all_blocked_magnets(all_magnets):
+
+    magnet_pairs = create_list_magnets_in_close_proximity(all_magnets)
 
     blocked_areas = []
 

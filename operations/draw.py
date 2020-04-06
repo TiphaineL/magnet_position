@@ -14,11 +14,9 @@ def draw_all_magnets(all_magnets):
             magnet.draw_rectangle('r')
 
 def draw_magnet_pickup_areas(all_magnets,colour):
-
     for magnet in all_magnets:
-
+        magnet.create_pickup_areas()
         for pickup_area in magnet.pickup_areas:
-
             pickup_area.draw_rectangle(colour)
 
 
