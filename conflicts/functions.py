@@ -83,6 +83,9 @@ def find_all_blocked_magnets(all_magnets):
         if len(magnet_conflict) > 0:
             blocked_areas.extend(magnet_conflict)
 
+            for conflict in magnet_conflict:
+                conflict.remove_blocked_pickup_areas()
+
     return blocked_areas
 
 def is_magnet_fully_blocked(magnet,blocked_pickup_areas):
@@ -145,4 +148,3 @@ def all_blocking_magnets_are_fully_blocked(list_of_blocking_magnets,list_of_full
         all_blocking_magnets_are_fully_blocked *= blocking_magnet_is_fully_blocked(blocking_magnet, list_of_fully_blocked_magnets)
 
     return all_blocking_magnets_are_fully_blocked
-

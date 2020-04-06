@@ -8,6 +8,10 @@ class conflicted_magnet:
         self.blocked_magnet      = blocked_magnet
         self.blocked_pickup_area = blocked_pickup_area
 
+    def remove_blocked_pickup_areas(self):
+        if self.blocked_pickup_area in self.blocked_magnet.pickup_areas:
+            self.blocked_magnet.pickup_areas.remove(self.blocked_pickup_area)
+
 def circular_magnet_is_fully_blocked(list_of_blocked_pickup_areas):
 
     [blocked_tangential_right,\
