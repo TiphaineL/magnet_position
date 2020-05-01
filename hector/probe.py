@@ -1,7 +1,7 @@
 from hector.constants import circular_rectangle_magnet_center_distance
 from math import pi, cos, sin, atan
 import numpy as np
-from operations.trigonometry import convert_radians_to_degrees, convert_modulus_angle, convert_degrees_to_radians
+from general_operations.trigonometry import convert_radians_to_degrees, convert_modulus_angle, convert_degrees_to_radians
 from hector.magnets.circular import circular_magnet
 from hector.magnets.rectangular import rectangular_magnet
 

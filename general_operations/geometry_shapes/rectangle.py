@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from operations.trigonometry import rotational_matrix,convert_degrees_to_radians
+from general_operations.trigonometry import rotational_matrix,convert_degrees_to_radians
 
 class rectangle:
 

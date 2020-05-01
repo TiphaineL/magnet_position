@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from operations.shapes.circle import circle
+from general_operations.geometry_shapes.circle import circle
 from hector.constants import HECTOR_plate_center_coordinate,HECTOR_plate_radius
 
 class HECTOR_plate(circle):

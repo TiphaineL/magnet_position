@@ -1,8 +1,7 @@
-from operations.intersections.circle_with_rectangle import circle_rectangle_intersection
-from conflicts.blocked_magnet import conflicted_magnet
-import matplotlib.pyplot as plt
+from general_operations.geometry_intersections.rectangle_with_rectangle import rectangle_rectangle_intersection
+from problem_operations.conflicts.blocked_magnet import conflicted_magnet
 
-def check_conflict_circle_circle_magnets(magnet_pair):
+def check_conflict_rectangle_rectangle_magnets(magnet_pair):
 
     all_blocked_pickup_areas = []
 
@@ -10,14 +9,15 @@ def check_conflict_circle_circle_magnets(magnet_pair):
 
         for pickup_area in magnet_pair[magnet_1].pickup_areas:
 
-            points = circle_rectangle_intersection(magnet_pair[magnet_2], pickup_area)
+            points = rectangle_rectangle_intersection(magnet_pair[magnet_2], pickup_area)
 
             if points:
 
                 # plt.figure()
-                # magnet_pair[magnet_1].draw_circle('c')
+                # magnet_pair[magnet_1].draw_rectangle('c')
                 # plt.text(magnet_pair[magnet_1].center[0], magnet_pair[magnet_1].center[1], str(int(magnet_pair[magnet_1].index)), fontsize=6)
-                # magnet_pair[magnet_2].draw_circle('r')
+                #
+                # magnet_pair[magnet_2].draw_rectangle('r')
                 # plt.text(magnet_pair[magnet_2].center[0], magnet_pair[magnet_2].center[1], str(int(magnet_pair[magnet_2].index)), fontsize=6)
                 #
                 # pickup_area.draw_rectangle('r')
@@ -28,3 +28,6 @@ def check_conflict_circle_circle_magnets(magnet_pair):
                 #    plt.plot(point[0],point[1],'or')
 
     return all_blocked_pickup_areas
+
+
+

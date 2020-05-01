@@ -1,8 +1,8 @@
-from conflicts.magnet_pair import circle_and_circle_magnets, circle_rectangle_magnets, rectangle_rectangle_magnets
-from conflicts.circular_magnet_with_circular_magnet import check_conflict_circle_circle_magnets
-from conflicts.circular_magnet_with_rectangular_magnet import check_conflict_circle_rectangle_magnets
-from conflicts.rectangular_magnet_and_rectangular_magnet import check_conflict_rectangle_rectangle_magnets
-from conflicts.blocked_magnet import circular_magnet_is_fully_blocked,rectangular_magnet_is_fully_blocked
+from hector.magnets.magnet_pair import circle_and_circle_magnets, circle_rectangle_magnets, rectangle_rectangle_magnets
+from problem_operations.conflicts.circular_magnet_with_circular_magnet import check_conflict_circle_circle_magnets
+from problem_operations.conflicts.circular_magnet_with_rectangular_magnet import check_conflict_circle_rectangle_magnets
+from problem_operations.conflicts.rectangular_magnet_and_rectangular_magnet import check_conflict_rectangle_rectangle_magnets
+from problem_operations.conflicts.blocked_magnet import circular_magnet_is_fully_blocked,rectangular_magnet_is_fully_blocked
 from hector.constants import rectangle_magnet_length, robot_arm_width
 import numpy as np
 from hector.magnets.rectangular import rectangular_magnet, is_rectangular_magnet
@@ -84,7 +84,7 @@ def find_all_blocked_magnets(all_magnets):
             blocked_areas.extend(magnet_conflict)
 
             for conflict in magnet_conflict:
-                conflict.remove_blocked_pickup_areas()
+                conflict.remove_blocked_pickup_areas_from_list_available_pickup()
 
     return blocked_areas
 

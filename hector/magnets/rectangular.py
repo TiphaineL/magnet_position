@@ -1,4 +1,4 @@
-from operations.shapes.rectangle import rectangle
+from general_operations.geometry_shapes.rectangle import rectangle
 from hector.constants import rectangle_magnet_length,rectangle_magnet_width,robot_arm_width
 from math import sin, cos, pi
 from hector.magnets.pickup_areas import inward, outward
